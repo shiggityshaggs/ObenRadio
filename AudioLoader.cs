@@ -59,7 +59,7 @@ namespace ObenRadio
 
         static IEnumerator LoadFiles(Radio radio, DirectoryInfo dir)
         {
-            IEnumerable<FileInfo> files = dir.Exists ? dir.EnumerateFiles("*.mp3", SearchOption.AllDirectories) : null;
+            IEnumerable<FileInfo> files = dir.Exists ? dir.EnumerateFiles("*.*", SearchOption.AllDirectories) : null;
 
             if (files == null || loadedPath == dir.FullName)
             {
@@ -76,7 +76,19 @@ namespace ObenRadio
 
             foreach (FileInfo file in files.OrderBy(x => x.Name))
             {
-                using (UnityWebRequest www = UnityWebRequestMultimedia.GetAudioClip(file.FullName, AudioType.MPEG))
+                AudioType audioType = file.Extension switch
+                {
+                    ".acc" => AudioType.ACC,
+                    ".mp3" => AudioType.MPEG,
+                    ".ogg" => AudioType.OGGVORBIS,
+                    ".wav" => AudioType.WAV,
+                    _ => AudioType.UNKNOWN
+                };
+
+                if (audioType == AudioType.UNKNOWN)
+                    continue;
+
+                using (UnityWebRequest www = UnityWebRequestMultimedia.GetAudioClip(file.FullName, audioType))
                 {
                     var downloadHandler = new DownloadHandlerAudioClip(file.FullName, AudioType.MPEG);
                     downloadHandler.streamAudio = true;
