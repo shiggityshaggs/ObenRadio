@@ -90,7 +90,7 @@ namespace ObenRadio
 
                 using (UnityWebRequest www = UnityWebRequestMultimedia.GetAudioClip(file.FullName, audioType))
                 {
-                    var downloadHandler = new DownloadHandlerAudioClip(file.FullName, AudioType.MPEG);
+                    var downloadHandler = new DownloadHandlerAudioClip(file.FullName, audioType);
                     downloadHandler.streamAudio = true;
                     www.downloadHandler = downloadHandler;
 
